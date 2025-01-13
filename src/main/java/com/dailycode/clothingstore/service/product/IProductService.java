@@ -22,5 +22,4 @@ public interface IProductService {
 
     List<ProductDto> getConvertedProducts(List<Product> products);
     ProductDto convertToDto(Product product);
-
 }

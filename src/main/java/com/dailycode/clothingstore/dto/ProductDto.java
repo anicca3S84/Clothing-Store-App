@@ -1,7 +1,9 @@
 package com.dailycode.clothingstore.dto;
 
 import com.dailycode.clothingstore.model.Category;
+import com.dailycode.clothingstore.model.Color;
 import com.dailycode.clothingstore.model.Image;
+import com.dailycode.clothingstore.model.Size;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -18,6 +20,9 @@ public class ProductDto {
     private String description;
     private Category category;
     private List<ImageDto> images;
+    private List<Size> sizes;
+    private List<Color> colors;
+    private SupplierDto supplier;
 
     public Long getId() {
         return id;
@@ -81,5 +86,29 @@ public class ProductDto {
 
     public void setImages(List<ImageDto> images) {
         this.images = images;
+    }
+
+    public List<Size> getSizes() {
+        return sizes;
+    }
+
+    public void setSizes(List<Size> sizes) {
+        this.sizes = sizes;
+    }
+
+    public List<Color> getColors() {
+        return colors;
+    }
+
+    public void setColors(List<Color> colors) {
+        this.colors = colors;
+    }
+
+    public SupplierDto getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(SupplierDto supplier) {
+        this.supplier = supplier;
     }
 }

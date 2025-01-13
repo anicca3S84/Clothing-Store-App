@@ -19,4 +19,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Long countByBrandAndName(String brand, String name);
 
     List<Product> findByNameContainingIgnoreCase(String name);
+
+    boolean existsByName(String name);
 }

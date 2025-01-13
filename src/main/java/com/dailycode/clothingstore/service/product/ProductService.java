@@ -1,18 +1,16 @@
 package com.dailycode.clothingstore.service.product;
 import com.dailycode.clothingstore.dto.ImageDto;
 import com.dailycode.clothingstore.dto.ProductDto;
+import com.dailycode.clothingstore.exceptions.AlreadyExistException;
 import com.dailycode.clothingstore.exceptions.NotFoundException;
-import com.dailycode.clothingstore.model.Category;
-import com.dailycode.clothingstore.model.Image;
-import com.dailycode.clothingstore.model.Product;
-import com.dailycode.clothingstore.repository.CategoryRepository;
-import com.dailycode.clothingstore.repository.ImageRepository;
-import com.dailycode.clothingstore.repository.ProductRepository;
+import com.dailycode.clothingstore.model.*;
+import com.dailycode.clothingstore.repository.*;
 import com.dailycode.clothingstore.request.ProductRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,32 +20,75 @@ public class ProductService implements IProductService{
     private final ModelMapper modelMapper;
     private final ImageRepository imageRepository;
     private final CategoryRepository categoryRepository;
+    private final ColorRepository colorRepository;
+    private final SizeRepository sizeRepository;
+    private final SupplierRepository supplierRepository;
 
-    public ProductService(ProductRepository productRepository, ModelMapper modelMapper, ImageRepository imageRepository, CategoryRepository categoryRepository) {
+    public ProductService(ProductRepository productRepository, ModelMapper modelMapper, ImageRepository imageRepository, CategoryRepository categoryRepository, ColorRepository colorRepository, SizeRepository sizeRepository, SupplierRepository supplierRepository) {
         this.productRepository = productRepository;
         this.modelMapper = modelMapper;
         this.imageRepository = imageRepository;
         this.categoryRepository = categoryRepository;
+        this.colorRepository = colorRepository;
+        this.sizeRepository = sizeRepository;
+        this.supplierRepository = supplierRepository;
     }
+
 
     @Override
     public Product addProduct(ProductRequest request) {
+        if (!supplierRepository.existsById(request.getSupplierId())) {
+            throw new NotFoundException("Supplier with ID " + request.getSupplierId() + " not found");
+        }
+
+        if (productRepository.existsByName(request.getName())) {
+            throw new AlreadyExistException("Product with name " + request.getName() + " already exists");
+        }
+
         Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
                 .orElseGet(() -> {
                     Category newCategory = new Category(request.getCategory().getName());
                     return categoryRepository.save(newCategory);
                 });
-        return productRepository.save(createProduct(request, category));
+
+        Supplier supplier = supplierRepository.findById(request.getSupplierId())
+                .orElseThrow(() -> new NotFoundException(
+                "Supplier not found"
+        ));
+
+        return productRepository.save(createProduct(request, category, supplier));
     }
 
-    private Product createProduct(ProductRequest request, Category category){
+    private Product createProduct(ProductRequest request, Category category, Supplier supplier){
+        List<Color> listColor = new ArrayList<>();
+        for(Color item : request.getColors()){
+            Color newColor = Optional.ofNullable(colorRepository.findByName(item.getName()))
+                    .orElseGet(() -> {
+                        Color color = new Color(item.getName(), item.getImageUrl());
+                        return colorRepository.save(color);
+                    });
+            listColor.add(newColor);
+        }
+
+        List<Size> listSize = new ArrayList<>();
+        for(Size item : request.getSizes()){
+            Size newSize = Optional.ofNullable(sizeRepository.findByName(item.getName()))
+                    .orElseGet(() -> {
+                        Size size = new Size(item.getName());
+                        return sizeRepository.save(size);
+                    });
+            listSize.add(newSize);
+        }
         return new Product(
                 request.getName(),
                 request.getBrand(),
                 request.getPrice(),
                 request.getInventory(),
                 request.getDescription(),
-                category
+                category,
+                listSize,
+                listColor,
+                supplier
         );
     }
 
@@ -138,4 +179,5 @@ public class ProductService implements IProductService{
         productDto.setImages(imageDtos);
         return productDto;
     }
+
 }

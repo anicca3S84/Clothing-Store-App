@@ -26,18 +26,19 @@ public class CategoryService implements ICategoryService{
 
     @Override
     public Category updateCategory(Long id, Category category) {
-        return Optional.of(category).filter(c ->!categoryRepository.existsByName(category.getName()))
-                .map(categoryRepository::save)
-                .orElseThrow(() -> new AlreadyExistException(category.getName() + " already exists"));
+        return Optional.ofNullable(getCategoryById(id)).map(oldCategory -> {
+            oldCategory.setName(category.getName());
+            return categoryRepository.save(oldCategory);
+        }).orElseThrow(() -> new NotFoundException("Category not found"));
     }
 
     @Override
     public void deleteCategory(Long id) {
-        categoryRepository
-                .findById(id)
-                .ifPresentOrElse(categoryRepository::delete, () -> {
-            throw new NotFoundException("Category not found");
-        });
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Category not found"));
+        if(!category.getProducts().isEmpty()){
+            throw new IllegalStateException("Cannot delete category. Please delete all related products first");
+        }
+        categoryRepository.delete(category);
     }
 
     @Override

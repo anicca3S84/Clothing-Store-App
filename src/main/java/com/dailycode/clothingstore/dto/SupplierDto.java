@@ -1,19 +1,16 @@
-package com.dailycode.clothingstore.model;
+package com.dailycode.clothingstore.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import lombok.Data;
 
-@Entity
-public class Size {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Data
+public class SupplierDto {
     private Long id;
     private String name;
 
-    public Size() {
+    public SupplierDto() {
     }
 
-    public Size(String name) {
+    public SupplierDto(String name) {
         this.name = name;
     }
 

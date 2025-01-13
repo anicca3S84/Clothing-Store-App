@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/categories/")
+@RequestMapping(path = "api/v1/categories/", produces = "application/json")
 public class CategoryController {
     private final ICategoryService iCategoryService;
 
@@ -25,7 +25,7 @@ public class CategoryController {
             Category newCategory = iCategoryService.addCategory(category);
             return ResponseEntity.ok(new ApiResponse("Add success", newCategory));
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse("Add failed", null));
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(e.getMessage(), null));
         }
     }
 
@@ -45,7 +45,9 @@ public class CategoryController {
             iCategoryService.deleteCategory(id);
             return ResponseEntity.ok(new ApiResponse("Delete success", null));
         }catch (NotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse("Delete failed", null));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
+        }catch (IllegalStateException e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
         }
     }
 

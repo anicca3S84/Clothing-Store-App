@@ -5,20 +5,22 @@ import lombok.Data;
 
 @Data
 public class ApiResponse {
-    private String name;
+    private String message;
     private Object data;
 
-    public ApiResponse(String name, Object data) {
-        this.name = name;
+    public ApiResponse(String message, Object data) {
+        this.message = message;
         this.data = data;
     }
 
-    public String getName() {
-        return name;
+    public ApiResponse(){}
+
+    public String getMessage() {
+        return message;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public Object getData() {

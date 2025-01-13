@@ -1,6 +1,7 @@
 package com.dailycode.clothingstore.controller;
 
 import com.dailycode.clothingstore.dto.ProductDto;
+import com.dailycode.clothingstore.exceptions.AlreadyExistException;
 import com.dailycode.clothingstore.exceptions.NotFoundException;
 import com.dailycode.clothingstore.model.Product;
 import com.dailycode.clothingstore.request.ProductRequest;
@@ -46,8 +47,10 @@ public class ProductController {
             Product product = iProductService.addProduct(request);
             ProductDto productDto = iProductService.convertToDto(product);
             return ResponseEntity.ok(new ApiResponse("Add success", productDto));
+        }catch (AlreadyExistException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponse(e.getMessage(), null));
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse("Add failed", null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
         }
     }
 

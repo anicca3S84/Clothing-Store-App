@@ -22,7 +22,7 @@ public class ProductDto {
     private List<ImageDto> images;
     private List<Size> sizes;
     private List<Color> colors;
-    private SupplierDto supplier;
+
 
     public Long getId() {
         return id;
@@ -102,13 +102,5 @@ public class ProductDto {
 
     public void setColors(List<Color> colors) {
         this.colors = colors;
-    }
-
-    public SupplierDto getSupplier() {
-        return supplier;
-    }
-
-    public void setSupplier(SupplierDto supplier) {
-        this.supplier = supplier;
     }
 }

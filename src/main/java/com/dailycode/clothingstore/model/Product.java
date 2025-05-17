@@ -31,27 +31,23 @@ public class Product {
     @ManyToMany
     @JoinTable(
             name = "product_size",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "size_id")
+            joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "size_id", referencedColumnName = "id")
     )
     private List<Size> sizes;
 
     @ManyToMany
     @JoinTable(
             name = "product_color",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "color_id")
+            joinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "color_id", referencedColumnName = "id")
     )
     private List<Color> colors;
 
-//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-//    private List<Comment> comments;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "supplier_id")
-    private Supplier supplier;
-
-    public Product(String name, String brand, BigDecimal price, int inventory, String description, Category category, List<Size> sizes, List<Color> colors, Supplier supplier) {
+    public Product(String name, String brand, BigDecimal price, int inventory, String description, Category category, List<Size> sizes, List<Color> colors) {
         this.name = name;
         this.brand = brand;
         this.price = price;
@@ -60,7 +56,6 @@ public class Product {
         this.category = category;
         this.sizes = sizes;
         this.colors = colors;
-        this.supplier = supplier;
     }
 
     public Product(){}
@@ -145,22 +140,14 @@ public class Product {
         this.colors = colors;
     }
 
-//    public List<Comment> getComments() {
-//        return comments;
-//    }
-//
-//    public void setComments(List<Comment> comments) {
-//        this.comments = comments;
-//    }
-
-
-    public Supplier getSupplier() {
-        return supplier;
+    public List<Comment> getComments() {
+        return comments;
     }
 
-    public void setSupplier(Supplier supplier) {
-        this.supplier = supplier;
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
+
 }
 
 

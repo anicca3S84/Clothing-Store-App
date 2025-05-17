@@ -6,6 +6,7 @@ import com.dailycode.clothingstore.response.ApiResponse;
 import com.dailycode.clothingstore.service.category.ICategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,8 @@ public class CategoryController {
     }
 
     @PostMapping("category/add")
+    @PreAuthorize("hasRole('ROLE_ADMIN")
+
     public ResponseEntity<ApiResponse> addCategory(@RequestBody Category category){
         try {
             Category newCategory = iCategoryService.addCategory(category);
@@ -30,6 +33,7 @@ public class CategoryController {
     }
 
     @PutMapping("category/{id}/update")
+    @PreAuthorize("hasRole('ROLE_ADMIN")
     public ResponseEntity<ApiResponse> updateCategory(@RequestBody Category category,@PathVariable Long id){
         try {
             Category newCategory = iCategoryService.updateCategory(id, category);
@@ -40,6 +44,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("category/{id}/delete")
+    @PreAuthorize("hasRole('ROLE_ADMIN")
     public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Long id){
         try {
             iCategoryService.deleteCategory(id);

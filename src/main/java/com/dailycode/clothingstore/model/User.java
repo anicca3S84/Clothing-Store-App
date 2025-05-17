@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import org.aspectj.weaver.ast.Or;
 import org.hibernate.annotations.NaturalId;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 @Entity
@@ -24,6 +26,14 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Cart cart;
 
+    //Role entities might be shared among multiple User entities.
+    // Automatically deleting them when one User is removed could lead to unintended data loss.
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
+    )
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    private Collection<Role> roles = new HashSet<>();
+
     public User() {
     }
 
@@ -34,14 +44,6 @@ public class User {
         this.password = password;
         this.orders = orders;
         this.cart = cart;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
     }
 
     public Long getId() {
@@ -84,11 +86,27 @@ public class User {
         this.password = password;
     }
 
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
     public Cart getCart() {
         return cart;
     }
 
     public void setCart(Cart cart) {
         this.cart = cart;
+    }
+
+    public Collection<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
     }
 }

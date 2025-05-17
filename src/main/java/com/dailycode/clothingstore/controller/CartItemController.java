@@ -9,11 +9,13 @@ import com.dailycode.clothingstore.service.cart.CartService;
 import com.dailycode.clothingstore.service.cart.ICartItemService;
 import com.dailycode.clothingstore.service.cart.ICartService;
 import com.dailycode.clothingstore.service.user.IUserService;
+import io.jsonwebtoken.JwtException;
 import jakarta.transaction.Transactional;
 import org.apache.juli.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.logging.Logger;
 
@@ -32,22 +34,25 @@ public class CartItemController {
     }
 
     @PostMapping("/item/add")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<ApiResponse> addItemToCart(
                                                      @RequestParam Long productId,
                                                      @RequestParam Integer quantity) {
         try {
             //get the user
-            User user = iUserService.getUserById(2L);
+            User user = iUserService.getAuthenticatedUser();
             Cart cart = iCartService.initializeNewCart(user);
-            //get cart by userId(check is user exist)
             iCartItemService.addItemToCart(cart.getId(), productId, quantity);
             return ResponseEntity.ok(new ApiResponse("Add Item Success", null));
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
+        } catch (JwtException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(e.getMessage(), null));
         }
     }
 
     @DeleteMapping("cart/{cartId}/item/{itemId}/remove")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<ApiResponse> removeItemFromCart(@PathVariable Long cartId,
                                                           @PathVariable Long itemId){
         try {
@@ -58,6 +63,7 @@ public class CartItemController {
         }
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @PutMapping("cart/{cartId}/item/{itemId}/update")
     public ResponseEntity<ApiResponse> updateItemQuantity(@PathVariable Long cartId,
                                                           @PathVariable Long itemId,

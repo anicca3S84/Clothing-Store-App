@@ -11,6 +11,7 @@ import com.dailycode.clothingstore.service.user.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,6 +21,7 @@ public class UserController {
     private IUserService iUserService;
 
     @GetMapping("{id}/user")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> getUserById(@PathVariable Long id){
         try {
             User user = iUserService.getUserById(id);
@@ -31,6 +33,7 @@ public class UserController {
     }
 
     @PostMapping("user/add")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> createUser(@RequestBody AddUserRequest request){
         try {
             User user = iUserService.createUser(request);
@@ -42,6 +45,7 @@ public class UserController {
     }
 
     @DeleteMapping("user/{id}/delete")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> deleteUser(@PathVariable Long id){
         try {
             iUserService.deleteUser(id);
@@ -53,6 +57,7 @@ public class UserController {
 
 
     @PutMapping("user/{id}/update")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> updateUser( @RequestBody UserUpdateRequest request, @PathVariable Long id){
         try {
             User user = iUserService.updateUser(request, id);

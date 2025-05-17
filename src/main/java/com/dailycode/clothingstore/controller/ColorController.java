@@ -6,6 +6,7 @@ import com.dailycode.clothingstore.response.ApiResponse;
 import com.dailycode.clothingstore.service.color.IColorService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class ColorController {
     }
 
     @PostMapping("color/add")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> addColor(@RequestBody Color color){
         try {
             Color newColor = iColorService.addColor(color);
@@ -30,6 +32,7 @@ public class ColorController {
     }
 
     @PutMapping("color/{id}/update")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> updateColor(@PathVariable Long id, @RequestBody Color color){
         try {
             Color newColor = iColorService.updateColor(id, color);
@@ -40,6 +43,7 @@ public class ColorController {
     }
 
     @DeleteMapping("color/{id}/delete")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> deleteColor(@PathVariable Long id){
         try {
             iColorService.deleteColorById(id);

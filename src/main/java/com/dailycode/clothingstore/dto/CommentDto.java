@@ -1,31 +1,21 @@
-package com.dailycode.clothingstore.model;
+package com.dailycode.clothingstore.dto;
 
+import com.dailycode.clothingstore.model.Product;
+import com.dailycode.clothingstore.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
+
 @Data
-@Entity
-public class Comment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class CommentDto {
     private Long id;
     private String content;
     private String createAt;
+    private Long productId;
+    private Long userId;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    public Comment() {
-    }
-
-    public Comment(String content){
-        this.content = content;
+    public CommentDto() {
     }
 
     public Long getId() {
@@ -52,19 +42,19 @@ public class Comment {
         this.createAt = createAt;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 
-    public User getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

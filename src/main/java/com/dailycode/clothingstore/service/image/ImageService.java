@@ -44,18 +44,22 @@ public class ImageService implements IImageService {
 
     @Override
     public List<ImageDto> saveImages(Long productId, List<MultipartFile> files) {
-        Product product = productService.getProductById(productId);
         List<ImageDto> savedImageDto = new ArrayList<>();
-        for (MultipartFile file : files){
-            try{
+        Product product = null;
+        if (productId != null) {
+            product = productService.getProductById(productId); // Chỉ lấy Product nếu productId không null
+        }
+
+        for (MultipartFile file : files) {
+            try {
                 Image image = new Image();
                 image.setFileName(file.getOriginalFilename());
                 image.setFileType(file.getContentType());
                 image.setImage(new SerialBlob(file.getBytes()));
                 String buildDownloadUrl = "/api/v1/images/image/download/";
-                String downloadUrl = buildDownloadUrl + image.getId();
-                image.setDownloadUrl(downloadUrl);
-                image.setProduct(product);
+                image.setDownloadUrl(buildDownloadUrl + "temp"); // URL tạm, sẽ cập nhật sau
+                image.setProduct(product); // Nếu productId null, product sẽ là null
+
                 Image savedImage = imageRepository.save(image);
                 savedImage.setDownloadUrl(buildDownloadUrl + savedImage.getId());
                 imageRepository.save(savedImage);
@@ -65,8 +69,8 @@ public class ImageService implements IImageService {
                 imageDto.setFileName(savedImage.getFileName());
                 imageDto.setDownloadUrl(savedImage.getDownloadUrl());
                 savedImageDto.add(imageDto);
-            }catch (IOException | SQLException e){
-                throw new RuntimeException(e.getMessage());
+            } catch (IOException | SQLException e) {
+                throw new RuntimeException("Failed to save image: " + e.getMessage(), e);
             }
         }
         return savedImageDto;

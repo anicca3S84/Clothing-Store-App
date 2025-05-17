@@ -10,6 +10,7 @@ import com.dailycode.clothingstore.service.product.IProductService;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,6 +43,7 @@ public class ProductController {
     }
 
     @PostMapping("product/add")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> addProduct(@RequestBody ProductRequest request){
         try {
             Product product = iProductService.addProduct(request);
@@ -54,7 +56,9 @@ public class ProductController {
         }
     }
 
+
     @PutMapping("product/{id}/update")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> updateProduct(@RequestBody ProductRequest request, @PathVariable Long id){
         try {
             Product product = iProductService.updateProduct(request, id);
@@ -66,6 +70,7 @@ public class ProductController {
     }
 
     @DeleteMapping("product/{id}/delete")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long id){
         try {
             iProductService.deleteProductById(id);

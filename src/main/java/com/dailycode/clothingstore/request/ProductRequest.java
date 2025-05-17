@@ -3,7 +3,6 @@ package com.dailycode.clothingstore.request;
 import com.dailycode.clothingstore.model.Category;
 import com.dailycode.clothingstore.model.Color;
 import com.dailycode.clothingstore.model.Size;
-import com.dailycode.clothingstore.model.Supplier;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -20,9 +19,8 @@ public class ProductRequest {
     private Category category;
     private List<Size> sizes;
     private List<Color> colors;
-    private Long supplierId;
 
-    public ProductRequest(String name, String brand, BigDecimal price, int inventory, String description, Category category, List<Size> sizes, List<Color> colors, Long supplierId) {
+    public ProductRequest(String name, String brand, BigDecimal price, int inventory, String description, Category category, List<Size> sizes, List<Color> colors ) {
         this.name = name;
         this.brand = brand;
         this.price = price;
@@ -31,7 +29,6 @@ public class ProductRequest {
         this.category = category;
         this.sizes = sizes;
         this.colors = colors;
-        this.supplierId = supplierId;
     }
 
     public Long getId() {
@@ -104,13 +101,5 @@ public class ProductRequest {
 
     public void setColors(List<Color> colors) {
         this.colors = colors;
-    }
-
-    public Long getSupplierId() {
-        return supplierId;
-    }
-
-    public void setSupplierId(Long supplierId) {
-        this.supplierId = supplierId;
     }
 }

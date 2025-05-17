@@ -6,6 +6,7 @@ import com.dailycode.clothingstore.response.ApiResponse;
 import com.dailycode.clothingstore.service.size.ISizeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class SizeController {
     }
 
     @PostMapping("size/add")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> addSize(@RequestBody Size size){
         try {
             Size newSize = iSizeService.addSize(size);
@@ -30,6 +32,7 @@ public class SizeController {
     }
 
     @PutMapping("size/{id}/update")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> updateSize( @PathVariable Long id, @RequestBody Size size){
         try {
             Size newSize = iSizeService.updateSize(id, size);
@@ -40,6 +43,7 @@ public class SizeController {
     }
 
     @DeleteMapping("size/{id}/delete")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> deleteSize(@PathVariable Long id){
         try {
             iSizeService.deleteSizeById(id);

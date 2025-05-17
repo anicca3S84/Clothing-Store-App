@@ -10,6 +10,7 @@ import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class OrderController {
     private IOrderService iOrderService;
 
     @PostMapping("order")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<ApiResponse> placeOrder(@RequestParam Long userId){
         try {
             Order order = iOrderService.placeOrder(userId);
@@ -32,6 +34,7 @@ public class OrderController {
     }
 
     @GetMapping("{orderId}/order")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     public ResponseEntity<ApiResponse> getOrder(@PathVariable Long orderId){
         try {
             Order order = iOrderService.getOrder(orderId);
@@ -43,6 +46,7 @@ public class OrderController {
     }
 
     @GetMapping("by/user/{userId}/order")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> getOrdersByUserId(@PathVariable Long userId){
         try {
             List<Order> orders = iOrderService.getOrdersByUserId(userId);

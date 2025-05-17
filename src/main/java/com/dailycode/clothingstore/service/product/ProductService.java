@@ -22,26 +22,22 @@ public class ProductService implements IProductService{
     private final CategoryRepository categoryRepository;
     private final ColorRepository colorRepository;
     private final SizeRepository sizeRepository;
-    private final SupplierRepository supplierRepository;
 
-    public ProductService(ProductRepository productRepository, ModelMapper modelMapper, ImageRepository imageRepository, CategoryRepository categoryRepository, ColorRepository colorRepository, SizeRepository sizeRepository, SupplierRepository supplierRepository) {
+
+    public ProductService(ProductRepository productRepository, ModelMapper modelMapper, ImageRepository imageRepository, CategoryRepository categoryRepository, ColorRepository colorRepository, SizeRepository sizeRepository) {
         this.productRepository = productRepository;
         this.modelMapper = modelMapper;
         this.imageRepository = imageRepository;
         this.categoryRepository = categoryRepository;
         this.colorRepository = colorRepository;
         this.sizeRepository = sizeRepository;
-        this.supplierRepository = supplierRepository;
     }
 
 
     @Override
     public Product addProduct(ProductRequest request) {
-        if (!supplierRepository.existsById(request.getSupplierId())) {
-            throw new NotFoundException("Supplier with ID " + request.getSupplierId() + " not found");
-        }
 
-        if (productRepository.existsByName(request.getName())) {
+        if (productRepository.existsByNameAndBrand(request.getName(), request.getBrand())) {
             throw new AlreadyExistException("Product with name " + request.getName() + " already exists");
         }
 
@@ -51,15 +47,10 @@ public class ProductService implements IProductService{
                     return categoryRepository.save(newCategory);
                 });
 
-        Supplier supplier = supplierRepository.findById(request.getSupplierId())
-                .orElseThrow(() -> new NotFoundException(
-                "Supplier not found"
-        ));
-
-        return productRepository.save(createProduct(request, category, supplier));
+        return productRepository.save(createProduct(request, category));
     }
 
-    private Product createProduct(ProductRequest request, Category category, Supplier supplier){
+    private Product createProduct(ProductRequest request, Category category){
         List<Color> listColor = new ArrayList<>();
         for(Color item : request.getColors()){
             Color newColor = Optional.ofNullable(colorRepository.findByName(item.getName()))
@@ -87,8 +78,7 @@ public class ProductService implements IProductService{
                 request.getDescription(),
                 category,
                 listSize,
-                listColor,
-                supplier
+                listColor
         );
     }
 
